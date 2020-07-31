@@ -1,3 +1,4 @@
 import './index.less'
+import { Canvas } from './canvas'
 
-// Canvas.init()
+const ctx = Canvas.create()

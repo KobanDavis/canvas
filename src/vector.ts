@@ -17,6 +17,11 @@ class Vector {
 		}
 	}
 
+	public set(position: Position): this {
+		this.position = { ...position }
+		return this
+	}
+
 	public normalise(): this {
 		const hypotenuse = Vector.getHypotenuse(this.position)
 		this.position.x = this.position.x / hypotenuse || 0
