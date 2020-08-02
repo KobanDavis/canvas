@@ -6,19 +6,29 @@ interface Vector {
 
 class Vector {
 	constructor(position: Position | Vector) {
-		if ('x' in position) {
-			const { x, y } = position
-			this.position = { x, y }
-		} else {
+		if (position instanceof Vector) {
 			const {
 				position: { x, y },
 			} = position
+			this.position = { x, y }
+		} else {
+			const { x, y } = position
 			this.position = { x, y }
 		}
 	}
 
 	public set(position: Position): this {
 		this.position = { ...position }
+		return this
+	}
+
+	public setX(x: number): this {
+		this.position.x = x
+		return this
+	}
+
+	public setY(y: number): this {
+		this.position.y = y
 		return this
 	}
 

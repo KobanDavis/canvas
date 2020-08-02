@@ -1,4 +1,7 @@
-import './index.less'
-import { Canvas } from './canvas'
-
-const ctx = Canvas.create()
+export * from './helper'
+export * from './types'
+export { default as Canvas } from './canvas'
+export { default as Mouse } from './mouse'
+export { default as QuadTree } from './quadTree'
+export { default as Vector } from './vector'
+export { default as Rectangle } from './rectangle'
