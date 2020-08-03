@@ -31,7 +31,7 @@ class QuadTree<T = any> {
 		return this.getLeaves().flatMap((leaf) => leaf.query(r))
 	}
 
-	public insert(position: Position, ref: any): boolean {
+	public insert(position: Position, ref: T): boolean {
 		if (this._boundary.contains(position)) {
 			if (this.isLeaf) {
 				if (this.points.length === this._capacity) {
@@ -47,7 +47,7 @@ class QuadTree<T = any> {
 		}
 	}
 
-	private pushPointToLeaves(position: Position, ref: any): true {
+	private pushPointToLeaves(position: Position, ref: T): true {
 		const leaves = this.getLeaves()
 		for (let i = 0; i < leaves.length; i++) {
 			const leaf = leaves[i]
@@ -77,7 +77,7 @@ class QuadTree<T = any> {
 		this.se = new QuadTree(seRect, this._capacity)
 	}
 
-	private getLeaves(): QuadTree[] {
+	private getLeaves(): QuadTree<T>[] {
 		return [this.nw, this.ne, this.sw, this.se]
 	}
 }
