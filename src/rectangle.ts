@@ -1,8 +1,6 @@
-import Vector from './vector'
+import { Position } from './types'
 
-interface Rectangle {
-	x: number
-	y: number
+interface Rectangle extends Position {
 	width: number
 	height: number
 }
@@ -15,26 +13,34 @@ class Rectangle {
 		this.height = height
 	}
 
-	public contains(v: Vector): boolean {
-		const { x, y } = v.position
-		return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height
+	public contains(v: Position): boolean {
+		const { x, y } = v
+		return (
+			// point >= left side
+			x >= this.x &&
+			// point >= right side
+			x <= this.x + this.width &&
+			// point >= top side
+			y >= this.y &&
+			// point >= bottom side
+			y <= this.y + this.height
+		)
 	}
 
 	public intersects(r: Rectangle): boolean {
 		const { x, y, width, height } = r
 
-		return !(
+		const cases =
 			// right side of r1 < left side of r2
-			(
-				this.x + this.width < x ||
-				// bottom side of r1 < top side of r2
-				this.y + this.height < y ||
-				// left side of r1 > right side of r2
-				this.x > x + width ||
-				// top side of r1 > bottom side of r2
-				this.y > y + height
-			)
-		)
+			this.x + this.width < x ||
+			// bottom side of r1 < top side of r2
+			this.y + this.height < y ||
+			// left side of r1 > right side of r2
+			this.x > x + width ||
+			// top side of r1 > bottom side of r2
+			this.y > y + height
+
+		return !cases
 	}
 }
 

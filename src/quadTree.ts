@@ -1,16 +1,21 @@
 import Rectangle from './rectangle'
-import Vector from './vector'
+import { Position } from './types'
 
-interface QuadTree {
+interface PositionRef<T = any> {
+	position: Position
+	ref: T
+}
+
+interface QuadTree<T = any> {
 	isLeaf: boolean
-	points: Vector[]
+	points: PositionRef<T>[]
 	nw: QuadTree
 	ne: QuadTree
 	sw: QuadTree
 	se: QuadTree
 }
 
-class QuadTree {
+class QuadTree<T = any> {
 	constructor(private _boundary: Rectangle, private _capacity: number) {
 		this.isLeaf = true
 		this.points = []
@@ -20,29 +25,43 @@ class QuadTree {
 		this.se = null
 	}
 
-	private getPointsByBoundary(r: Rectangle): Vector[] {
+	public query(r: Rectangle): PositionRef<T>[] {
 		if (!this._boundary.intersects(r)) return []
 		if (this.isLeaf) return this.points
-		return this.getLeaves().flatMap((leaf) => leaf.getPointsByBoundary(r))
+		return this.getLeaves().flatMap((leaf) => leaf.query(r))
 	}
 
-	private addPoint(v: Vector): boolean {
-		if (this._boundary.contains(v)) {
-			this.points.push(v)
-			if (this.points.length > this._capacity) {
-				this.divide()
+	public insert(position: Position, ref: any): boolean {
+		if (this._boundary.contains(position)) {
+			if (this.isLeaf) {
+				if (this.points.length === this._capacity) {
+					this.divide()
+					return this.pushPointToLeaves(position, ref)
+				} else {
+					this.points.push({ position, ref })
+					return true
+				}
+			} else {
+				return this.pushPointToLeaves(position, ref)
 			}
-			return true
 		}
-		return false
+	}
+
+	private pushPointToLeaves(position: Position, ref: any): true {
+		const leaves = this.getLeaves()
+		for (let i = 0; i < leaves.length; i++) {
+			const leaf = leaves[i]
+			if (leaf.insert(position, ref)) return true
+		}
 	}
 
 	private divide(): void {
 		this.createLeaves()
 		for (let i = 0; i < this.points.length; i++) {
-			const point = this.points[i]
-			this.pushPointToLeaves(point)
+			const { position, ref } = this.points[i]
+			this.pushPointToLeaves(position, ref)
 		}
+		this.points = null
 		this.isLeaf = false
 	}
 
@@ -56,22 +75,6 @@ class QuadTree {
 		this.sw = new QuadTree(swRect, this._capacity)
 		const seRect = new Rectangle(x + width / 2, y + height / 2, width / 2, height / 2)
 		this.se = new QuadTree(seRect, this._capacity)
-	}
-
-	private pushPointToLeaves(v: Vector): void {
-		const leaves = this.getLeaves()
-		for (let i = 0; i < leaves.length; i++) {
-			if (leaves[i].insert(v)) return
-		}
-		throw new Error("This shouldn't happen")
-	}
-
-	public insert(v: Vector): boolean {
-		if (this.isLeaf) {
-			return this.addPoint(v)
-		}
-		this.pushPointToLeaves(v)
-		return true
 	}
 
 	private getLeaves(): QuadTree[] {
