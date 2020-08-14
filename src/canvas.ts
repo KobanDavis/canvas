@@ -52,6 +52,7 @@ class Canvas {
 			for (let i = 0; i < length; i++) {
 				arr[i] = data[i * 4]
 			}
+			return arr
 		}
 		return data
 	}
