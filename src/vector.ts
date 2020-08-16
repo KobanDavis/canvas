@@ -5,14 +5,16 @@ interface Vector {
 }
 
 class Vector {
-	constructor(position: Position | Vector) {
-		if (position instanceof Vector) {
+	constructor(vector: Vector)
+	constructor(position: Position)
+	constructor(v: Position | Vector) {
+		if (v instanceof Vector) {
 			const {
 				position: { x, y },
-			} = position
+			} = v
 			this.position = { x, y }
 		} else {
-			const { x, y } = position
+			const { x, y } = v
 			this.position = { x, y }
 		}
 	}
@@ -39,6 +41,8 @@ class Vector {
 		return this
 	}
 
+	public subtract(vector: Vector): this
+	public subtract(position: Position): this
 	public subtract(v: Position | Vector): this {
 		const position = 'x' in v ? v : v.position
 		this.position.x -= position.x
@@ -46,6 +50,8 @@ class Vector {
 		return this
 	}
 
+	public add(vector: Vector): this
+	public add(position: Position): this
 	public add(v: Position | Vector): this {
 		const position = 'x' in v ? v : v.position
 		this.position.x += position.x
@@ -59,6 +65,8 @@ class Vector {
 		return this
 	}
 
+	public dist(vector: Vector): number
+	public dist(position: Position): number
 	public dist(v: Position | Vector): number {
 		const position = 'x' in v ? v : v.position
 		const x = this.position.x - position.x
